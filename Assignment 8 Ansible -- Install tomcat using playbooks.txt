@@ -88,3 +88,17 @@ vi project2.yaml
     - name: copy gameoflife
       action: copy src=/mnt/Docker-HTTPD/gameoflife.war dest=/usr/share/tomcat/webapps/
 
+...................................using Docker container..........................
+- hosts: devlinux
+  user: suraj
+  become: yes
+  connection: ssh
+  gather_facts: yes
+
+  tasks:
+
+    - name: copy gameoflife
+      action: copy src=/mnt/gameoflife.war dest=/mnt
+
+    - name: run container
+      command: docker run -itdp 8080:8080 -v /mnt:/usr/local/tomcat/webapps --name test tomcat:9
