@@ -62,4 +62,29 @@ vi project.yaml
     - name: download sample.war
       action: get_url url=https://tomcat.apache.org/tomcat-7.0-doc/appdev/sample/sample.war dest=/usr/share/tomcat/webapps
 
+.................................................................
+
+vi project2.yaml
+
+--- #game of life deploy on tomcat
+
+- hosts: devlinux[1]
+  user: suraj
+  become: yes
+  connection: ssh
+  gather_facts: yes
+
+  tasks:
+    - name: install java
+      action: yum name=java state=present
+
+    - name: install tomcat
+      action: yum name=tomcat state=present
+
+    - name: start tomcat
+      action: service name=tomcat state=started
+
+
+    - name: copy gameoflife
+      action: copy src=/mnt/Docker-HTTPD/gameoflife.war dest=/usr/share/tomcat/webapps/
 
