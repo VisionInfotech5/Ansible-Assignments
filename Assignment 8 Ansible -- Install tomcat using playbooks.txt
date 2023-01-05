@@ -1,0 +1,65 @@
+Launch Jenkins Master 
+
+sudo su
+useradd suraj
+passwd suraj
+visudo
+
+root  ALL=(ALL)       ALL
+suraj ALL=(ALL)       NOPASSWD: ALL
+
+cd /etc/ssh/
+vi sshd_config
+
+PermitRootLogin yes  
+PasswordAuthentication yes 
+#PasswordAuthentication no
+
+service sshd restart
+
+same configuration done till on Host 1 and Host 2
+
+sudo su - suraj
+ssh-keygen
+
+ssh-copy-id suraj@172.31.1.15
+ssh-copy-id suraj@172.31.5.20
+
+
+sudo amazon-linux-extras install ansible2 -y
+vi /etc/ansible/ansible.cfg
+vi /etc/ansible/hosts
+
+[devlinux]
+
+172.31.1.15
+172.31.5.20
+..........................................................................................................
+Create Playbook
+
+vi project.yaml
+
+--- #Deploy Game of Life on Tomcat using Playbook
+
+- hosts: devlinux
+  user: suraj
+  become: yes
+  connection: ssh
+  gather_facts: yes
+
+
+  tasks:
+
+    - name: install java
+      action: yum name=java state=present
+
+    - name: install tomcat
+      action: yum name=tomcat state=present
+
+    - name: start tomcat
+      action: service name=tomcat state=started
+
+    - name: download sample.war
+      action: get_url url=https://tomcat.apache.org/tomcat-7.0-doc/appdev/sample/sample.war dest=/usr/share/tomcat/webapps
+
+
